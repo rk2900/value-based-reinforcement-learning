@@ -282,7 +282,7 @@ An obvious way to approximate the value in Eq.~(\ref{eq:objective}) is
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Double Q-learning}{Single Estimator (cont.)}
+\begin{frame}{Double Q-learning}{Biased Estimation of $E[X_i]$}
 	\begin{itemize}
 		\item The value $\max_i \mu_i(S)$ is an unbiased estimate for $E[\max_j \mu_j]$.
 	\end{itemize}
@@ -298,8 +298,11 @@ An obvious way to approximate the value in Eq.~(\ref{eq:objective}) is
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Double Q-learning}{Biased Estimation of $E[X_i]$}
-
+\begin{frame}{Double Q-learning}{Double Estimators}
+	\begin{itemize}
+		\item Two sets of estimators: $\mu^A={\mu_1^A,\ldots,\mu_M^A}$, $\mu^b={\mu_1^B,\ldots,\mu_M^B}$.
+		\item Two subsets of samples: $S=S^A\cup S^B,~S^A \cap S^B = \emptyset$
+	\end{itemize}
 \end{frame}
 
 
