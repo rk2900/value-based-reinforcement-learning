@@ -45,6 +45,13 @@
 %\usetheme{Szeged}
 %\usetheme{Warsaw}
 
+\newcommand{\red}[1]{{\color{red} #1}}
+\newcommand{\blue}[1]{{\color{blue} #1}}
+
+\newcommand{\qa}{Q^{approx}}
+\newcommand{\qt}{Q^{target}}
+\newcommand{\ha}{\hat{a}}
+
 \title{Value-based Reinforcement Learning}
 
 % A subtitle is optional and this may be deleted
@@ -109,24 +116,41 @@
 % and table of contents.
 \section{Revision of Value-based RL}
 
-\subsection{Sarsa and Q-learning}
+\subsection{Dynamic Programming(omitted)}
+\subsection{Monte-carlo Method(omitted)}
+\subsection{TD: Sarsa and Q-learning}
 
-\begin{frame}{Sarsa}{Algorithm}
+\begin{frame}{Sarsa \& Q-learning}{Algorithm}
   \begin{figure}[t]
   	\includegraphics[width=0.7\columnwidth]{figures/sarsa-alg.jpg}
   \end{figure}
-\end{frame}
 
-\begin{frame}{Q-Learning}{Algorithm}
-\begin{figure}[t]
-	\includegraphics[width=0.7\columnwidth]{figures/q-learning-alg.jpg}
-\end{figure}
+  \begin{figure}[t]
+  	\includegraphics[width=0.7\columnwidth]{figures/q-learning-alg.jpg}
+  \end{figure}
 \end{frame}
 
 \begin{frame}{Difference}
-  Update Rule
   \begin{itemize}
-  	\item Sarsa
+  	\item Exploration
+  		\begin{itemize}
+  			\item Sarsa: on-policy
+  			\item Q-learning: off-policy
+  		\end{itemize}
+  	\item Update Rule
+	  	\begin{itemize}
+	  		\item Sarsa
+	  		\begin{equation}\nonumber
+	  		\begin{aligned}
+	  		& Choose~ A'~ from~ S'~ using~policy~derived~from~Q~(e.g. \epsilon-greedy) \\
+	  		& Q(S,A) \leftarrow Q(S,A) + \alpha[r + \gamma Q(S', A') - Q(S,A)]
+	  		\end{aligned}
+	  		\end{equation}
+	  		\item Q-learning
+	  		\begin{equation}\nonumber
+	  		Q(S,A) \leftarrow Q(S,A) + \alpha[r + \gamma \max_a Q(S', a) - Q(S,A)]
+	  		\end{equation}
+	  	\end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -136,9 +160,53 @@
 \section{Issues in Q-learning}
 
 \subsection{Overestimation}
+\begin{frame}{Overestimation}{Preliminaries}
+	Recall that
+	\begin{equation}
+		Q(s,a) \longleftarrow r^a_s + \gamma~\red{\max}_{\ha} Q(s', \ha)
+	\end{equation}
+	Repeated application of this update equation eventually yields Q-values that give rise to \blue{a policy which maximizes the expected cumulative discounted reward}
+	\footnote{C. J. C. H.Watkins, Learning from Delayed Rewards. PhD thesis, King’s College, Cambridge, England, 1989.} in the look-up table case.
+	
+	The \red{$\max$} operation may cause some problems under the approximation scenario.
+\end{frame}
+
+\begin{frame}{Overestimation}
+	Assume $Q^{approx}(\cdot)$ representing implicit target values $Q^{target}$, corrupted by a noise term $Y$ such that
+	\begin{equation}\nonumber
+		\qa(s',\ha) = \qt(s', \ha) + Y_{s'}^{\ha}
+	\end{equation}
+	
+	\begin{equation}
+	\begin{aligned}
+		Z_s &\overset{def}{=} r_s^a + \gamma~ \max_{\ha} \qa(s', \ha) - \left( r_s^a + \gamma~  \max_{\ha} \qt(s', \ha)\right) \\
+		& = \gamma~ \left( \max_{\ha} \qa(s', \ha) - \max_{\ha} \qt(s', \ha)\right)
+	\end{aligned}
+	\end{equation}
+	
+	The key observation is
+	\begin{equation}
+		E[Y_{s'}^{\ha}] = 0, ~ \forall \ha ~ \overset{often}{\Longrightarrow} E[Z_s] > 0 ~.
+	\end{equation}
+\end{frame}
+
+
 \subsection{Double Q-learning}
 \subsection{Averaged Q-learning}
 
+
+
+\section{Convergence of Tabular TD}
+\subsection{Sarsa}
+\subsection{Q-learning}
+
+
+
+
+\section{Deep Q-network}
+
+\subsection{Nature DQN}
+\subsection{Several Imrovements}
 
 
 \end{document}
