@@ -158,6 +158,40 @@
 
 
 
+
+
+\section{Deep Q-network}
+
+\subsection{Nature DQN}
+\subsection{Several Imrovements}
+
+\begin{frame}{Q-networks}
+Represent value function by \red{Q-network} with weights $w$
+\begin{equation}
+Q(s,a; w) \approx Q^*(s,a) ~.
+\end{equation}
+
+\begin{figure}[t]
+	\includegraphics[width=0.4\columnwidth]{figures/q-network.jpg}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Deep Q-network}
+Refer to D. Silver's slides P31 - P45.
+\end{frame}
+
+\begin{frame}{Duelling network}
+\begin{figure}
+\centering
+\includegraphics[width=0.65\linewidth]{figures/duel-network}
+\caption{Duelling network: split Q-network into two channels}
+\label{fig:duel-network}
+\end{figure}
+\end{frame}
+
+
+
+
 \section{Issues in Q-learning}
 
 \subsection{Overestimation}
@@ -493,34 +527,7 @@ Furthermore, $D_{K,m} < \frac{1}{K}$ and
 
 
 
-\section{Deep Q-network}
 
-\subsection{Nature DQN}
-\subsection{Several Imrovements}
-
-\begin{frame}{Q-networks}
-	Represent value function by \red{Q-network} with weights $w$
-	\begin{equation}
-		Q(s,a; w) \approx Q^*(s,a) ~.
-	\end{equation}
-	
-	\begin{figure}[t]
-		\includegraphics[width=0.4\columnwidth]{figures/q-network.jpg}
-	\end{figure}
-\end{frame}
-
-\begin{frame}{Deep Q-network}
-Refer to D. Silver's slides P31 - P45.
-\end{frame}
-
-\begin{frame}{Duelling network}
-	\begin{figure}
-		\centering
-		\includegraphics[width=0.65\linewidth]{figures/duel-network}
-		\caption{Duelling network: split Q-network into two channels}
-		\label{fig:duel-network}
-	\end{figure}
-\end{frame}
 
 
 \section{Convergence of Tabular TD}
