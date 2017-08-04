@@ -194,6 +194,8 @@
 	\begin{Lemma}
 		Let $n$ denote the number of actions applicable at state $s'$. If all $n$ actions share the same target Q-value, i.e., $\exists q: \forall \ha: q=\qt(s', \ha)$, then the average overestimation $E[Z_s]$ is $\gamma c$ with $c \overset{def}{=} \epsilon \frac{n-1}{n+1}$.
 	\end{Lemma}
+
+	The proof can be referred to the paper\footnote{\tiny{Thrun S, Schwartz A. Issues in using function approximation for reinforcement learning[C] Proceedings of the 1993 Connectionist Models Summer School Hillsdale, NJ. Lawrence Erlbaum. 1993.}}.
 	\begin{Corollary}
 		$0 \leq E[Z_s] \leq \gamma c$ with $c = \epsilon \frac{n-1}{n+1}$.
 	\end{Corollary}
@@ -208,7 +210,7 @@
 		\item The state transition function is deterministic.
 	\end{itemize}
 
-	One necessary condition for the success of Q-learning is that the sequence of Q-values $Q(s_i, a_i)$ is monotonically increasing in $i$:
+	One \textit{necessary} condition for the success of Q-learning is that the sequence of Q-values $Q(s_i, a_i)$ is monotonically increasing in $i$:
 	\begin{equation}
 		Q(s_i, a_i) \leq Q(s_{i+1}, a_{i+1}), for~all~ i \in \{0, \ldots, L-1\}
 	\end{equation}
@@ -225,7 +227,7 @@ Case 1: the learner \textit{always} overestimates Q-values by $\gamma c$.
 Case 2: Assume that Q-learning managed to learn the \textit{last} L-1 Q-values of this optimal path correctly.
 
 \begin{itemize}
-	\item Q-values are given by iteratively discounting the final reward with the \textit{distance} to the goal state, i.e., $Q(s_{L-i}, a_{L-i}) = \gamma^i$ for $i \in \{1,\ldots,L-1\}$.
+	\item Q-values are given by iteratively discounting the final reward with the \textit{distance} to the goal state, i.e., \red{$Q(s_{L-i}, a_{L-i}) = \gamma^i$} for $i \in \{1,\ldots,L-1\}$.
 	\item \textit{Correct} Q-value $Q^{correct}(s_0, a_0)$ is $\gamma^L$.
 	
 	\item In order to maintain monotonicity of Q, we need to make sure that
