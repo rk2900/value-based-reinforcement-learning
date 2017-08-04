@@ -286,7 +286,7 @@ An obvious way to approximate the value in Eq.~(\ref{eq:objective}) is
 	\begin{itemize}
 		\item The value $\max_i \mu_i(S)$ is an unbiased estimate for $E[\max_j \mu_j]$.
 	\end{itemize}
-	\begin{equation}
+	\begin{equation}\label{eq:single_est}
 	\begin{aligned}
 		E[\max_i \mu_i] &= \int_{-\infty}^{\infty} x ~f_{max}^{\mu}(x) \\
 		&= \int_{-\infty}^{\infty}x\frac{d}{dx}\prod_{i=1}^M F_i^{\mu}(x)dx \\
@@ -302,12 +302,52 @@ An obvious way to approximate the value in Eq.~(\ref{eq:objective}) is
 	\begin{itemize}
 		\item Two sets of estimators: $\mu^A={\mu_1^A,\ldots,\mu_M^A}$, $\mu^b={\mu_1^B,\ldots,\mu_M^B}$.
 		\item Two subsets of samples: $S=S^A\cup S^B,~S^A \cap S^B = \emptyset$
+		\item $\mu_i^A(S) \overset{def}{=}\frac{1}{|S^A_i|}\sum_{s\in S^A_i}s$, $\mu_i^B(S) \overset{def}{=}\frac{1}{|S^B_i|}\sum_{s\in S^B_i}s$.
 	\end{itemize}
+
+	\begin{itemize}
+		\item Both $\mu_i^A$ and $\mu_i^B$ are unbiased if we assume proper split on the sample set $S$.
+		\item $Max^A(S) \overset{def}{=} \{ j | \max_i \mu_i^A(S)\}$.
+		\item Since $\mu_i^B(S)$ is an independent, unbiased set of estimators, we have $E[\mu_j^B(S)] = E[X_j]$ for all $j$ including $j \in Max^A$. We can pick $a^*$ such that $\mu_{a^*}^A \overset{def}{=} \max_i \mu_i^A(S)$. So that
+		\begin{equation}
+			\max_i E[X_i] = \max_i E[\mu_i^B] \approx \mu_{a^*}^B ~.
+		\end{equation}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Double Q-learning}{Difference Between Single/Double Estimators}
+	\begin{equation}
+	\begin{aligned}
+		P(j=a^*) &= \int_{-\infty}^{\infty} P(\mu_j^A = x) \prod_{i\neq j}^M P(\mu_j^A <x) dx \\
+		&\overset{def}{=} \int_{-\infty}^{\infty} f_j^A(x) \prod_{i\neq j}^M F_i^A(x) dx 
+	\end{aligned}
+	\end{equation}
+	
+	\begin{equation}\label{eq:double_est}
+		\sum_j^M \blue{P(j=a^*)} E[\mu_j^B] = \sum_j^M \red{E[\mu_j^B]} \int_{-\infty}^{\infty} f_j^A(x) \prod_{i\neq j}^M F_i^A(x) dx ~.
+	\end{equation}
+	
+	Recall Eq.~(\ref{eq:single_est}) of single estimator that
+	\begin{equation}\nonumber
+	E[\max_i \mu_i] = \int_{-\infty}^{\infty} x ~f_{max}^{\mu}(x) = \sum_j^M \int_{-\infty}^{\infty} \red{x} ~f_j^{\mu}(s) \prod_{i\neq j}^M \blue{F_i^{\mu}(x)} dx ~.
+	\end{equation}
+\end{frame}
+
+
+\begin{frame}{Double Q-learning}{Algorithm\footnote{\tiny{Hasselt H V. Double Q-learning[C] Advances in Neural Information Processing Systems. 2010: 2613-2621.}}\footnote{\tiny{Van Hasselt H, Guez A, Silver D. Deep Reinforcement Learning with Double Q-Learning[C] AAAI. 2016: 2094-2100.}\\}}
+	\begin{figure}[t]
+		\includegraphics[width=0.7\columnwidth]{figures/double-q-learning-alg.jpg}
+	\end{figure}
 \end{frame}
 
 
 \subsection{Averaged Q-learning}
 
+\begin{frame}{Averaged Deep Q-Network}
+	\begin{itemize}
+		\item 
+	\end{itemize}
+\end{frame}
 
 
 \section{Convergence of Tabular TD}
