@@ -51,6 +51,7 @@
 \newcommand{\qa}{Q^{approx}}
 \newcommand{\qt}{Q^{target}}
 \newcommand{\ha}{\hat{a}}
+\newcommand{\qi}{Q(s,a; \theta_i)}
 
 \title{Value-based Reinforcement Learning}
 
@@ -165,8 +166,7 @@
 	\begin{equation}
 		Q(s,a) \longleftarrow r^a_s + \gamma~\red{\max}_{\ha} Q(s', \ha)
 	\end{equation}
-	Repeated application of this update equation eventually yields Q-values that give rise to \blue{a policy which maximizes the expected cumulative discounted reward}
-	\footnote{C. J. C. H.Watkins, Learning from Delayed Rewards. PhD thesis, King’s College, Cambridge, England, 1989.} in the look-up table case.
+	Repeated application of this update equation eventually yields Q-values that give rise to \blue{a policy which maximizes the expected cumulative discounted reward}\footnote{C. J. C. H.Watkins, Learning from Delayed Rewards. PhD thesis, King’s College, Cambridge, England, 1989.} in the look-up table case.
 	
 	The \red{$\max$} operation may cause some problems under the approximation scenario.
 \end{frame}
@@ -340,20 +340,154 @@ An obvious way to approximate the value in Eq.~(\ref{eq:objective}) is
 	\end{figure}
 \end{frame}
 
+\begin{frame}{Double Q-learning}{Performance}
+\begin{figure}[t]
+	\includegraphics[width=0.7\columnwidth]{figures/ddqn-performance.jpg}
+\end{figure}
+\end{frame}
+
 
 \subsection{Averaged Q-learning}
 
 \begin{frame}{Averaged Deep Q-Network}
 	\begin{itemize}
-		\item 
+		\item Double Q-learning aims to correct the \textit{overestimation} of natural Q-learning.
+		\item Averaged DQN focus on variance reduction and stabilization.
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{Averaged Deep Q-Network}{Revision of DQN\footnote{\tiny{Mnih V, Kavukcuoglu K, Silver D, et al. Human-level control through deep reinforcement learning[J]. Nature, 2015, 518(7540): 529-533.}}}
+	\begin{figure}[t]
+		\includegraphics[width=0.7\columnwidth]{figures/dqn-alg.jpg}
+	\end{figure}
+\end{frame}
 
-\section{Convergence of Tabular TD}
-\subsection{Sarsa}
-\subsection{Q-learning}
 
+\begin{frame}{Averaged Deep Q-Network}{Algorithm\footnote{\tiny{Anschel O, Baram N, Shimkin N. Averaged-DQN: Variance Reduction and Stabilization for Deep Reinforcement Learning[C] International Conference on Machine Learning. 2017: 176-185.}}}
+\begin{figure}[t]
+	\includegraphics[width=0.7\columnwidth]{figures/adqn-alg.jpg}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Averaged Deep Q-Network}{Performance}
+\begin{figure}[t]
+	\includegraphics[width=0.88\columnwidth]{figures/adqn-performance.jpg}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Averaged Deep Q-Network}{Error Analysis}
+Let $Q(s,a; \theta_i)$ be the value function of DQN at iteration $i$,
+\begin{equation}
+\begin{aligned}
+	\Delta_i &= \qi - Q^*(s,a) \\
+	&= \underbrace{\qi - y_{s,a}^i}_{\text{Target Apprixmation Error}} + \underbrace{y_{s,a}^i - \hat{y}_{s,a}^i}_{\text{Overestimation Error}} \\
+	&~~~~ + \underbrace{ \hat{y}_{s,a}^i - Q^*(s,a)}_{Optimality Difference} ~.
+\end{aligned}
+\end{equation}
+
+Here $y_{s,a}^i$ is the \textit{DQN target}, and $\hat{y}_{s,a}^i$ is the \textit{true target}, such that
+\begin{equation}
+\begin{aligned}
+	y_{s,a}^i &= E_{\mathcal{B}} \left[ r + \gamma \max_{a'} Q(s', a'; \theta_i{i-1}) | s,a \right] ~,\\
+	\hat{y}_{s,a}^i &= E_{\mathcal{B}} \left[ r + \gamma \max_{a'} ( \hat{y}^{i-1}_{s',a'} ) | s,a \right] ~.
+\end{aligned}
+\end{equation}
+\end{frame}
+
+\begin{frame}{Averaged Deep Q-Network}{Background and Related Work}
+Define $Z_{s,a}^i$ as TAE (Target Approximation Error) and $R_{s,a}^i$ as overestimation error.
+	\begin{equation}
+	\begin{aligned}
+		Z_{s,a}^i &= Q(s,a; \theta_i) - y_{s,a}^i ~,\\
+		R_{s,a}^i &= y_{s,a}^i - \hat{y}_{s,a}^i ~.
+	\end{aligned}
+	\end{equation}
+	
+In Thrun \& Schwartz (1993), $Z_{s,a}^i$ is considered as a random variable uniformly distributed error in $[-\epsilon, \epsilon]$ and
+\begin{equation}
+	E_{\red{z}}[R_{s,a}^i] = \gamma E_{\red{z}}[\max_{a'}[Z_{s',a'}^{i-1}]] = \gamma \epsilon \frac{n-1}{n+1} ~.
+\end{equation}
+
+In Double Q-learning paper, the author replaces \textit{positive} bias with a \textit{negative} one.
+\end{frame}
+
+
+\begin{frame}{Averaged Deep Q-Network}{TAE Variance Reduction}
+Assume that
+\begin{equation}
+\begin{aligned}
+	&E[Z_{s,a}^i] = 0,~ Var[Z_{s,a}^i] = \sigma_s^2, \\
+	&\text{for}~ i \neq j, Cov[Z_{s,a}^i, Z_{s',a'}^j] = 0.
+\end{aligned}
+\end{equation}
+We consider a fixed policy for updating the target values, and conveniently consider a zero reward $r=0$ everywhere since it has no effect on variance calculations.
+\end{frame}
+
+
+\begin{frame}{Averaged Deep Q-Network}{TAE Variance Reduction (cont.)}
+Consider M-state unidirectional MDP as
+\begin{figure}[t]
+	\includegraphics[width=0.6\columnwidth]{figures/m-mdp.jpg}
+\end{figure}
+
+\begin{equation}
+\begin{aligned}
+	& Q^{DQN}(s_0, a; \theta_i) = Z_{s_0,a}^i + y_{s_0,a}^i \\
+	& ~~~ = Z_{s_0,a}^i + \gamma Q(s_1, a; \theta_{i-1}) \\
+	& ~~~ = Z_{s_0,a}^i + \gamma [Z_{s_1,a}^{i-1} + y_{s_1,a}^{i-1}] = \ldots = \\
+	& ~~~ = Z_{s_0,a}^i + \gamma Z_{s_1,a}^{i-1} + \ldots + \gamma^{M-1} Z_{s_{M-1},a}^{i-(M-1)}
+\end{aligned}
+\end{equation}
+Since $\text{for}~ i \neq j, Cov[Z_{s,a}^i, Z_{s',a'}^j] = 0$, we have
+\begin{equation}
+	Var[Q^{DQN}(s_0, a; \theta_i)] = \sum_{m=0}^{M-1}\gamma^{2m}\sigma_{s_m}^2 ~.
+\end{equation}
+\end{frame}
+
+\begin{frame}{Averaged Deep Q-Network}{TAE Variance Reduction (cont.)}
+For Averaged DQN,
+\begin{equation}
+Q_i = Z_i + \gamma P\frac{1}{K} \sum_{k=1}^{K} Q_{i-k} ~,
+\end{equation}
+where $P \in \mathbb{R}_+^{S\times S}$ is the transition probabilities matrix for the given policy.
+Recall that $Z_{s,a}^i = Q(s,a; \theta_i) - y_{s,a}^i $.
+\end{frame}
+
+
+\begin{frame}{Averaged Deep Q-Network}{Ensemble DQN}
+\begin{figure}[t]
+	\includegraphics[width=0.6\columnwidth]{figures/edqn-alg.jpg}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Averaged Deep Q-Network}{Ensemble DQN Variance}
+For $i > M$,
+\begin{equation}
+\begin{aligned}
+	Q_i^E(s_0, a) &= \sum_{m=0}^{M-1}\gamma^m \frac{1}{K} \sum_{k=1}^{K} Z_{s_m,a}^{k, i-m} \\
+	Var[Q_i^E(s_0, a)] &= \sum_{m=0}^{M-1} \frac{1}{K} \gamma^{2m} \sigma_{s_m}^2 \\
+	&= \frac{1}{K} Var[Q^{DQN}(s_0, a; \theta_i)]
+\end{aligned}
+\end{equation}
+\end{frame}
+
+
+\begin{frame}{Averaged Deep Q-Network}{Averaged DQN Variance}
+For $i > KM$,
+\begin{equation}
+	Var[Q_i^A(s_0, a)] = \sum_{m=0}^{M-1} D_{K,m} \gamma^{2m} \sigma_{s_m}^2 ~,
+\end{equation}
+where $D_{K,m} = \frac{1}{N} \sum_{n=0}^{N-1} | U_n/K |^{2(m+1)}$ and $U = (U_n)_{n=0}^{N-1}$ denoting a Discrete Fourier Transform of a rectangle pulse.
+
+Furthermore, $D_{K,m} < \frac{1}{K}$ and
+\begin{equation}
+\begin{aligned}
+	Var[Q_i^A(s_0, a)] &< Var[Q_i^E(s_0, a)] \\
+	&= \frac{1}{K} Var[Q^{DQN}(s_0, a; \theta_i)] ~.
+\end{aligned}
+\end{equation}
+\end{frame}
 
 
 
@@ -362,6 +496,101 @@ An obvious way to approximate the value in Eq.~(\ref{eq:objective}) is
 \subsection{Nature DQN}
 \subsection{Several Imrovements}
 
+\begin{frame}{Q-networks}
+	Represent value function by \red{Q-network} with weights $w$
+	\begin{equation}
+		Q(s,a; w) \approx Q^*(s,a) ~.
+	\end{equation}
+	
+	\begin{figure}[t]
+		\includegraphics[width=0.4\columnwidth]{figures/q-network.jpg}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Deep Q-network}
+Refer to D. Silver's slides P31 - P45.
+\end{frame}
+
+\begin{frame}{Duelling network}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.65\linewidth]{figures/duel-network}
+		\caption{Duelling network: split Q-network into two channels}
+		\label{fig:duel-network}
+	\end{figure}
+\end{frame}
+
+
+\section{Convergence of Tabular TD}
+\subsection{Sarsa}
+
+\begin{frame}{Convergence of Sarsa(0)}{Convergence of Random Iterative Process}
+\begin{lemma}
+	A random iterative process
+	\begin{equation}\label{eq:random-iterarive-process}
+		\Delta_{t+1}(x) = (1-\alpha_t(x)) \Delta_{t}(x) + \alpha_t(x)F_t(x), ~x\in X, ~t=0,1,2,\ldots
+	\end{equation}
+	converges to zero w.p.1 if the following properties hold:
+	\small{
+	\begin{itemize}
+		\item 1. the set of possible states $X$ is finite.
+		\item 2. $0 \leq \alpha_t(x) \leq 1, \sum_t \alpha_t(x) = \infty, \sum_t \alpha_t^2(x) < \infty ~ w.p.1$, where the probability is over the learning rates $\alpha_t$.
+		\item 3. $\| E[F_t(\cdot) | P_t] \|_W \leq \kappa \| \Delta_{t} \|_W + c_t$, where $\kappa \in [0,1)$ and $c_t$ converges to zero w.p.1.
+		\item 4. $Var[F_t(x)] \leq K(1 + \| \Delta_t \|_W)^2$, where K is some constant.
+	\end{itemize}
+	}
+	\tiny{Here $P_t$ is an increasing sequence of $\sigma$-fields that includes the past of the process. In particular we assume that $\alpha_t, \Delta_t, F_{t-1} \in P_t$.
+	The notation $\|\cdot\|_W$ refers to some (fixed) weighted maximum norm.}
+\end{lemma}
+\end{frame}
+
+
+\begin{frame}{Convergence of Sarsa(0)}
+	\begin{theorem}
+		In finite state-action MDPs, the $Q_t$ values computed by the Sarsa(0) rule
+		\small{
+		\begin{equation}\nonumber
+		\begin{aligned}
+			Q_{t+1}(s_t, a_t) &= Q_t(s_t, a_t) + \alpha_t(s_t, a_t)[r_t + \gamma Q_t(s_{t+1}, a_{t+1}) - Q_t(s_t, a_t)] \\
+			&= (1-\alpha(s_t, a_t)) Q_t(s_t, a_t) + \alpha_t(s_t, a_t)[r_t + \gamma Q_t(s_{t+1}, a_{t+1})] ~.
+		\end{aligned}
+		\end{equation}
+		}
+		converges to $Q^*$ and the learning policy $\pi_t$ converges to an optimal policy $\pi^*$ if the learning policy is GLIE with these additional conditions are satisfied
+		\begin{itemize}
+			\item 1. The Q values are stored in a lookup table.
+			\item 2. The learning rates satisfy $0 \leq \alpha_t(s_t, a_t) \leq 1, ~\sum_t \alpha_t(s_t, a_t) = \infty, \sum_t \alpha_t^2(s_t, a_t) < \infty$ and $\alpha_t(s_t, a_t) = 0$ unless $(s, a) = (s_t, a_t)$.
+			\item 3. $Var[r(s,a)] < \infty$ .
+		\end{itemize}
+	\end{theorem}
+\end{frame}
+
+
+\begin{frame}{Convergence of Sarsa(0)}
+\begin{itemize}
+	\item $x \overset{def}{=} (s_t, a_t)$.
+	\item $\Delta_{t} \overset{def}{=} Q_t(s, a) - Q^*(s,a)$.
+\end{itemize}
+So we get
+\begin{equation}
+\begin{aligned}
+	\Delta_{t+1}(s_t, a_t) &= Q_{t+1}(s_t, a_t) - Q^*(s,a) \\
+	&= (1-\alpha(s_t, a_t)) \Delta_{t}(s_t, a_t) + \alpha_t(s_t, a_t)F_t(s_t, a_t).
+\end{aligned}
+\end{equation}
+where
+\begin{equation}
+\begin{aligned}
+	F_t(s_t, a_t) &= r_t + \gamma \max_{a'} Q_t(s_{t+1}, a') - Q^*(s_t, a_t) \\
+	& + \gamma \left[ Q_t(s_{t+1}, a_{t+1}) - \max_{a'} Q_t(s_{t+1}, a') \right] \\
+	& \overset{def}{=} \blue{r_t + \gamma \max_{a'} Q_t(s_{t+1}, a') - Q^*(s_t, a_t)} + C_t(Q) \\
+	& \overset{def}{=} \blue{F_t^Q(s_t,a_t)} + C_t(s_t, a_t)
+\end{aligned}
+\end{equation}
+\end{frame}
+
+
+\subsection{Q-learning (TBE)}
 
 \end{document}
 
