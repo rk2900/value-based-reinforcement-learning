@@ -326,7 +326,7 @@ An obvious way to approximate the value in Eq.~(\ref{eq:objective}) is
 	\begin{aligned}
 		E[\max_i \mu_i] &= \int_{-\infty}^{\infty} x ~f_{max}^{\mu}(x) \\
 		&= \int_{-\infty}^{\infty}x\frac{d}{dx}\prod_{i=1}^M F_i^{\mu}(x)dx \\
-		&= \sum_j^M \int_{-\infty}^{\infty}x ~f_j^{\mu}(s) \prod_{i\neq j}^M F_i^{\mu}(x)dx ~.
+		&= \sum_j^M \int_{-\infty}^{\infty}x ~f_j^{\mu}(x) \prod_{i\neq j}^M F_i^{\mu}(x)dx ~.
 	\end{aligned}
 	\end{equation}
 	\begin{itemize}
@@ -365,7 +365,7 @@ An obvious way to approximate the value in Eq.~(\ref{eq:objective}) is
 	
 	Recall Eq.~(\ref{eq:single_est}) of single estimator that
 	\begin{equation}\nonumber
-	E[\max_i \mu_i] = \int_{-\infty}^{\infty} x ~f_{max}^{\mu}(x) = \sum_j^M \int_{-\infty}^{\infty} \red{x} ~f_j^{\mu}(s) \prod_{i\neq j}^M \blue{F_i^{\mu}(x)} dx ~.
+	E[\max_i \mu_i] = \int_{-\infty}^{\infty} x ~f_{max}^{\mu}(x) = \sum_j^M \int_{-\infty}^{\infty} \red{x} ~f_j^{\mu}(x) \prod_{i\neq j}^M \blue{F_i^{\mu}(x)} dx ~.
 	\end{equation}
 \end{frame}
 
