@@ -1,0 +1,2 @@
+## Value-based Reinforcement Learning
+关于value-based RL相关的slides，主要讲解了基于值的强化学习方法的几个重要理论方法，同时讲解了Q-learning作为off-policy方法在学习过程中产生的bias的来源已经如何减轻的几种方法。
